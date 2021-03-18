@@ -1,0 +1,43 @@
+{
+  "variables": {
+    "name": "mariadb-ubuntu18"
+  },
+  "builders":[
+    {
+      "type": "docker",
+      "image": "ubuntu:18.04",
+      "commit": true,
+      "changes": [
+        "ENTRYPOINT service mysql start && /bin/bash"
+      ]
+    }
+  ],
+
+  "provisioners":[
+    {
+      "type": "shell",
+      "inline": [
+        "/usr/bin/apt-get update",
+        "/usr/bin/apt-get install python3 -y"
+      ]
+    },
+
+    {
+      "type": "ansible",
+      "playbook_file": "./mariadb-playbook.yaml",
+      "extra_arguments": [
+        "-v"
+      ]
+    }
+  ],
+
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "mariadb/ubuntu18",
+        "tag": "latest"
+      }
+    ]
+  ]
+}

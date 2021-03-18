@@ -1,0 +1,11 @@
+db_packages:
+  - name: mariadb-server
+    version: present
+  - name: python3-pymysql
+    version: present
+db_service : mysql
+db_unix_socket: "/var/run/mysqld/mysqld.sock"
+db_config_file_dest: "/etc/mysql/mariadb.cnf"
+
+
+

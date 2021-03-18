@@ -1,0 +1,35 @@
+- name: Include variable file based on distro
+  include_vars:
+    file: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yaml"
+
+- name: Include secrets
+  include_vars:
+    file: "secrets.yaml"
+
+- name: Install mariadb packages
+  package:
+    name: "{{ item.name }}"
+    state: "{{ item.version }}"
+  with_items: "{{ db_packages }}"
+
+- name: Enable and start mariadb service
+  service:
+    name: "{{ db_service }}"
+    state: started
+    enabled: yes
+
+- name: Set db root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    host: localhost
+    login_unix_socket: "{{ db_unix_socket }}"
+    state: present
+
+- name : Configure mariadb service
+  template:
+    src: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}/mariadb.cnf"
+    dest: "{{ db_config_file_dest }}"
+    owner: mysql
+    group: mysql
+  notify: Restart db service

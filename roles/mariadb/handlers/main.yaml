@@ -1,0 +1,4 @@
+- name: Restart db service
+  service:
+     name: "{{ db_service }}"
+     state: restarted
